@@ -11,10 +11,8 @@ def process_adsb_data(raw_data):
     if not raw_data or "ac" not in raw_data:
         return {"type": "FeatureCollection", "features": []}  # Return empty collection if no data
 
-    features = []
-
-    for aircraft in raw_data["ac"]:
-        if "lat" in aircraft and "lon" in aircraft:
+    def generate_feature(aircraft):
+        
             feature = {
                 "type": "Feature",
                 "geometry": {
@@ -34,6 +32,8 @@ def process_adsb_data(raw_data):
                     "seen": aircraft.get("seen", 0)
                 }
             }
-            features.append(feature)
+            return feature
+        
+    features = [generate_feature(aircraft) for aircraft in raw_data["ac"] if "lat" in aircraft and "lon" in aircraft]
 
     return {"type": "FeatureCollection", "features": features}
